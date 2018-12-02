@@ -17,6 +17,15 @@ Start with `wwwRRR` (`w` for a white chip, and `R` for a red chip, read from top
 
 ## How many shuffling does it take for a pair of N chips to be separated?
 
-A simple piece of code in [here](src/basic_backtrack.py) results in:
+Before, I address this question, we need to know if the order of shuffling matters.
 
-![](images/res_basic_shuffling.png)
+> Does it mater if you put the first chip down from the left stack (as in the first gif) or right stack (as in the second figure)?
+
+I wrote a simple piece of code in [here](src/basic_backtrack.py) which compares different shuffling for all `n`s from 1-99:
+
+![](images/res_backtrack_shuffling_order.png)
+
+In this experiment: 
+- I do not change the shuffling for every shuffle. 
+- AB shuffling always finishes with fewer number of steps as the number of the chips in each stack (green line is the identity line).
+- BA shuffling somtimes finishes with fewer steps than AB shuffling.
