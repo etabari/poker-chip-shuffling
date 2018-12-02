@@ -64,23 +64,23 @@ def so_backtrack(n):
 
 if __name__ == '__main__':
 
-    shuffling = []
-    shuffling_rev = []
-    shuffling_opt = []
-    x_range = range(3, 30)
-    for x in x_range:
-        shuffling += [basic_backtrack(x, shuffleAB)]
-        shuffling_rev += [basic_backtrack(x, shuffleBA)]
-        shuffling_opt += [so_backtrack(x)]
-        if x % 5 == 0:
-            print(x)
-
     with open('data/backtracking.csv', 'w', newline='') as csvfile:
         fieldnames = ['chips', 'ABshufflings', 'BAshufflings', 'OptimalShufflings']
         csvwriter = csv.writer(csvfile)
         csvwriter.writerow(fieldnames)
-        for i in range(len(x_range)):
-            csvwriter.writerow([x_range[i], shuffling[i], shuffling_rev[i], shuffling_opt[i]])
+
+    shuffling = []
+    shuffling_rev = []
+    shuffling_opt = []
+    x_range = range(3, 35)
+    for x in x_range:
+        shuffling += [basic_backtrack(x, shuffleAB)]
+        shuffling_rev += [basic_backtrack(x, shuffleBA)]
+        shuffling_opt += [so_backtrack(x)]
+
+        with open('data/backtracking.csv', 'a', newline='') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow([x, shuffling[-1], shuffling_rev[-1], shuffling_opt[-1]])
 
 
     plt.plot(x_range, shuffling, label='AB Shuffling')
