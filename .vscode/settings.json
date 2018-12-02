@@ -1,3 +1,6 @@
 {
-	"markdown.styles": [".vscode/vscode-github.css"]
+	"markdown.styles": [
+		".vscode/vscode-github.css"
+	],
+	"editor.insertSpaces": true
 }
