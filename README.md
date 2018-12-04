@@ -17,6 +17,9 @@ Start with `wwwRRR` (`w` for a white chip, and `R` for a red chip, read from top
 
 ## How many shuffling does it take for a pair of N chips to be separated?
 
+
+### Shuffling Order 
+
 Before, I address this question, we need to know if the order of shuffling matters.
 
 > Does it mater if you put the first chip down from the left stack (as in the first gif) or right stack (as in the second figure)?
@@ -26,6 +29,22 @@ I wrote a simple piece of code in [here](src/basic_backtrack.py) which compares 
 ![](images/res_backtrack_shuffling_order.png)
 
 In this experiment: 
-- I do not change the shuffling for every shuffle. 
+
+- For each stack of `2n` chips, I test both shuffling orders: AB and BA.
+  - **AB shuffling** puts the first chip down from right (top) stack
+     - This is the shuffling that I do with real chips.
+     - I tend to put the right chip down first.
+     - check the figure with white/red chips.
+  - **BA shuffling** puts the first chip down from the left (bottom) stack
+  - I do not change shuffling order for the stack at every shuffling step. 
+
+Observations:
+
 - AB shuffling always finishes with fewer number of steps as the number of the chips in each stack (green line is the identity line).
 - BA shuffling somtimes finishes with fewer steps than AB shuffling.
+
+### Mixing Shuffling Orders
+
+While the upper bound for the number of shufflings seems to be the number of chips in each color, we can get much smaller number of shuffling steps for a given set of chips.
+
+A backtracking algorithm will try AB and BA shuffling at every shuffling step.

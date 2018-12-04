@@ -14,7 +14,7 @@ def shuffleBA(b, a):
     return [x for ab in tuppled for x in ab]
 
 
-def basic_backtrack(n, shuffler):
+def count_shuffles(n, shuffler):
     # label chips 0 and 1.
     # it makes it easier to see if all 0s are together.
     chips = [0] * n + [1] * n
@@ -37,34 +37,54 @@ def basic_backtrack(n, shuffler):
 # Pick the best shuffling order every time:
 
 
-def _so_backtrack(chips, shuffler, depth=0):
+memory = {}
+memory_access = 0
+nodes = 0
+
+def _backtrack_shuffles(chips, shuffler, best_case, depth=0):
+    global memory, memory_access, nodes
+    
     n = len(chips) // 2
 
-    if depth > n:
-        return n
+    if depth >= best_case:
+        return best_case
 
     bottom_chips = chips[:n]
     top_chips = chips[n:]
 
     chips = shuffler(top_chips, bottom_chips)
 
+    chips_str = ''.join([str(c) for c in chips])
+    if chips_str in memory:
+        memory_access += 1
+        return best_case
+    else:
+        memory[chips_str] = 1
+
+    nodes += 1
     if sum(chips[:n]) * sum(chips[n:]) == 0:
         return 1
     else:
-        return min(_so_backtrack(chips, shuffleAB, depth+1), _so_backtrack(chips, shuffleBA, depth + 1)) + 1
+        ab = _backtrack_shuffles(chips, shuffleAB, best_case, depth + 1)
+        ba = _backtrack_shuffles(chips, shuffleBA, best_case, depth + 1)
+        return min(ab, ba) + 1
 
 
-def so_backtrack(n):
+def backtrack_shuffles(n, best_case):
+    global memory, memory_access
+
+    memory = {}
+    memory_access = 0
+    nodes = 0
     # label chips 0 and 1.
     # it makes it easier to see if all 0s are together.
     chips = [0] * n + [1] * n
 
-    return min(_so_backtrack(chips, shuffleAB), _so_backtrack(chips, shuffleBA))
+    return min(_backtrack_shuffles(chips, shuffleAB, best_case), _backtrack_shuffles(chips, shuffleBA, best_case))
 
 
-if __name__ == '__main__':
-
-    with open('data/backtracking.csv', 'w', newline='') as csvfile:
+def main():
+    with open('data/backtracking.csv', 'a', newline='') as csvfile:
         fieldnames = ['chips', 'ABshufflings', 'BAshufflings', 'OptimalShufflings']
         csvwriter = csv.writer(csvfile)
         csvwriter.writerow(fieldnames)
@@ -72,16 +92,18 @@ if __name__ == '__main__':
     shuffling = []
     shuffling_rev = []
     shuffling_opt = []
-    x_range = range(3, 35)
+    x_range = range(30, 100)
     for x in x_range:
-        shuffling += [basic_backtrack(x, shuffleAB)]
-        shuffling_rev += [basic_backtrack(x, shuffleBA)]
-        shuffling_opt += [so_backtrack(x)]
+        shuffling += [count_shuffles(x, shuffleAB)]
+        shuffling_rev += [count_shuffles(x, shuffleBA)]
+        best_case = min(shuffling[-1], shuffling_rev[-1])
+        shuffling_opt += [backtrack_shuffles(x, best_case)]
+
+        print(x, len(memory), memory_access, nodes)
 
         with open('data/backtracking.csv', 'a', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow([x, shuffling[-1], shuffling_rev[-1], shuffling_opt[-1]])
-
 
     plt.plot(x_range, shuffling, label='AB Shuffling')
     plt.plot(x_range, shuffling_rev, label='BA Shuffling')
@@ -92,3 +114,7 @@ if __name__ == '__main__':
     plt.ylabel('Number of shufflings')
     plt.suptitle('Basic Backtracking: Shuffling Order')
     plt.show()
+
+
+if __name__ == '__main__':
+    main()
